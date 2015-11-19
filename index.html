@@ -10,10 +10,15 @@ layout: default
     {% for post in site.posts %}
       <li>
         <span class="post-meta">{{ post.date | date: "%b %-d, %Y" }}</span>
-
         <h2>
+        {% if 'solutions' == post.categories.first %}
+          <a class="post-link" href="{{ post.link }}">{{ post.title }}</a>
+        </h2>
+          {{ post.content }}
+        {% else %}
           <a class="post-link" href="{{ post.url | prepend: site.baseurl }}">{{ post.title }}</a>
         </h2>
+        {% endif %}
       </li>
     {% endfor %}
   </ul>
