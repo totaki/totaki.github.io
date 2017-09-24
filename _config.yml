@@ -1,11 +1,9 @@
 # Site settings
-title: Emelianov Sergey
+title: Сергей Емельянов. Python разработчик
 email: karagabul@gmail.com
-description: > # this means to ignore newlines until "baseurl:"
-  This blog of full web-developer. Posts maybe about solutions
-  or examples works. Some times you find somthing funny :)
+description: "" # this means to ignore newlines until "baseurl:"
 baseurl: "" # the subpath of your site, e.g. /blog/
-url: "http://emelianov.site"
+url: "http://www.emelianov.site"
 github_username:  totaki
 
 # Build settings
