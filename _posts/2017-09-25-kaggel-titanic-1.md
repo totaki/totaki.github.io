@@ -1,5 +1,6 @@
 ---
 title: Kaggle, Titanic. Эпизод 0
+date: 2017-09-25 20:00 
 layout: post
 tags: машинное обучение, kaggle, catboost
 ---
