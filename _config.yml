@@ -10,3 +10,4 @@ github_username:  totaki
 markdown: kramdown
 permalink: /:categories/:title
 highlighter: pygments
+exclude: ["vendor"]
