@@ -4,15 +4,9 @@ services:
   app:
     build:
       context: ./
-    image: gtpages:0.1
+    image: gtpages:0.3
     command: bundle exec jekyll serve --host 0.0.0.0
     container_name: emelianov_site
     volumes:
       - ./:/app/src
-    ports:
-      - "4000:4000"
-
-networks:
-  default:
-    external:
-      name: docker-compose    
+    network_mode: host

@@ -5,9 +5,16 @@ description: "" # this means to ignore newlines until "baseurl:"
 baseurl: "" # the subpath of your site, e.g. /blog/
 url: "http://www.emelianov.site"
 github_username:  totaki
+future: true
 
 # Build settings
 markdown: kramdown
 permalink: /:categories/:title
 highlighter: pygments
 exclude: ["vendor"]
+
+defaults:
+  - scope:
+      path: "assets/img"
+    values:
+      image: true

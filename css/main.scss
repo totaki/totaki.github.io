@@ -40,6 +40,20 @@ $on-laptop:        800px;
 }
 
 
+.dataframe-wrapper {
+	overflow: auto
+}
+
+.dataframe {
+	border: 1px solid black;
+	border-collapse: collapse;
+
+	td, th {
+		text-align: left;
+	    padding: 4px;
+	    white-space: nowrap;
+	}
+}
 
 // Import partials from `sass_dir` (defaults to `_sass`)
 @import
