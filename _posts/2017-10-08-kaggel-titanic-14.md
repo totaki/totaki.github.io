@@ -3,8 +3,8 @@ title: Kaggle, Titanic. x0D
 date: 2017-10-08 22:00 
 layout: post
 tags: машинное обучение, kaggle, catboost
-prev_link: /kaggel-titanic-11
-next_link: /kaggel-titanic-13
+prev_link: /kaggel-titanic-13
+next_link: /kaggel-titanic-15
 ---
 	
 Попробуем в последний раз потюнить параметры.
