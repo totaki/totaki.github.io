@@ -1,6 +1,6 @@
 ---
 title: Kaggle, Titanic. x0F
-date: 2017-10-09 22:00 
+date: 2017-10-10 22:00 
 layout: post
 tags: машинное обучение, kaggle, catboost
 prev_link: /kaggel-titanic-15
