@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+<style>
+     .container {
+       box-sizing: border-box;
+       display: flex;
+     }
+     .item {
+       box-sizing: border-box;
+       position: relative;
+       padding-right: 36px;
+     }
+    .cell {
+      box-sizing: border-box;
+      border: 1px solid black;
+      background-size: contain;
+      background-repeat: no-repeat;
+    }
+    .row {
+      display: flex;
+      box-sizing: border-box;
+    }
+    .rows {
+      position: relative;
+      box-sizing: border-box;
+    }
+    .wall {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      box-sizing: border-box;
+      border: 2px solid red;
+    }
+    .count {
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+    }
+    .find {
+      color: orangered;
+    }
+    .buy {
+      color: green;
+    }
+    .ok {
+      color: green;
+      text-decoration: line-through;
+    }
+    li {
+      color: darkslategray;
+    }
+</style>
+</head>
+<body>
+<div>
+    <ul>
+        <li class="ok">Плитка</li>
+        <li class="ok">Ванная
+            <a href="https://shop.roca.ru/vannaya-komnata/vanny/shopby/rc_gross_width-800-750/rc_material-stal_-chugun_.html" target="_blank">ROSA</a>,
+            <a href="https://vektor-penza.ru/santehnika/vanna/vanna-stalnaya/vanna-stal-roca-princess-n-170h75sm-s-otvdruch" target="_blank">Подходящая [14512 ₽]</a>
+        </li>
+        <li>Толчек</li>
+        <li>Душевая система
+            <a href="https://wasserkraft.ru/a16601" target="_blank">Wasserkraft [19 990 ₽]</a>
+        </li>
+        <li>Смеситель в раковину
+            <a href="https://wasserkraft.ru/product360/" target="_blank">Wasserkraft Lopau 3203</a>
+        </li>
+        <li class="buy">Система с раковиной</li>
+        <li>Потолок</li>
+        <li>Светильники</li>
+        <li>Розетки</li>
+        <li>Полочки под всякое гавно</li>
+        <li>Держатель туалетной бумаги</li>
+        <li>Держатель для палатенец</li>
+        <li>Стекляшка закрывашка душ</li>
+        <li>Закрывашка ванная</li>
+    </ul>
+</div>
+<div id="stats"></div>
+<h3>Ванная</h3>
+<div id="bath" class="container"></div>
+<h3>Туалет</h3>
+<div id="toilet" class="container"></div>
+
+<script>
+    const Mod = 2;
+
+    const Names = {
+      Simple: 'pl1',
+      Flower1: 'pl2',
+      Flower2: 'pl3',
+      Mosaic: 'pl4',
+      Floor: 'pl5'
+    }
+
+    const TotalCount = {
+      [Names.Simple]: 0,
+      [Names.Flower1]: 0,
+      [Names.Flower2]: 0,
+      [Names.Mosaic]: 0,
+      [Names.Floor]: 0,
+    }
+
+    const PerPack = {
+      [Names.Simple]: 11,
+      [Names.Flower1]: 11,
+      [Names.Flower2]: 11,
+      [Names.Mosaic]: 11,
+      [Names.Floor]: 8,
+    }
+
+    const Prices = {
+      [Names.Simple]: 1031.25,
+      [Names.Flower1]: 1120.63,
+      [Names.Flower2]: 1120.63,
+      [Names.Mosaic]: 1168.75,
+      [Names.Floor]: 1078.65,
+    }
+
+    const Tile = (width, height, name_1, name_2) => {
+      let _calls = false;
+      return {
+        size: () => ({ width, height }),
+        name: () => {
+          _calls = !_calls;
+          if (!name_2) return name_1
+          else return _calls ? name_1 : name_2
+        }
+      }
+    }
+
+    const Wall = (width, height, tile, name) => ({
+        width, height, tile, name
+    })
+
+    const Tiles = {
+        Simple: () => Tile(50, 25, Names.Simple),
+        Flower: () => Tile(50, 25, Names.Flower1, Names.Flower2),
+        Mosaic: () => Tile(50, 25, Names.Mosaic),
+        Floor: () =>Tile(42, 42, Names.Floor)
+    }
+
+    const BathRoom = [
+      Wall(214, 270, Tiles.Simple(), 'Входная стена'),
+      Wall(173, 270, Tiles.Simple(), 'Стена с ванной'),
+      Wall(214, 270, Tiles.Flower(), 'Стена с окном'),
+      Wall(174, 270, Tiles.Simple(), 'Стена с раковиной'),
+      Wall(174, 214, Tiles.Floor(), 'Пол'),
+    ]
+
+    const ToiletRoom = [
+      Wall(140, 270, Tiles.Simple(), 'Входная стена'),
+      Wall(181, 270, Tiles.Simple(), 'Стена с ванной'),
+      Wall(108, 270, Tiles.Flower(), 'Стена с туалетом'),
+      Wall(105, 270, Tiles.Simple(), 'Стена с выемкой'),
+      Wall(33, 270, Tiles.Flower(), 'Стена с выемкой'),
+      Wall(68, 270, Tiles.Flower(), 'Стена с выемкой'),
+      Wall(181, 140, Tiles.Floor(), 'Пол'),
+    ]
+
+    function chess(column, offset, tile) {
+      return {
+        [offset + 0 + ':' + column]: tile,
+        [offset + 1 + ':' + column]: tile,
+        [offset + 4 + ':' + column]: tile,
+        [offset + 5 + ':' + column]: tile,
+        [offset + 8 + ':' + column]: tile,
+        [offset + 9 + ':' + column]: tile,
+      }
+    }
+
+    function column(column, count, tile) {
+      const result = {}
+      for (let i = 0; i < count; i++) {
+        result[i + ':' + column] = tile
+      }
+      return result
+    }
+
+    const bathSidesInserts = {
+      'Входная стена': {
+        ...chess(0, 0, Tiles.Mosaic()),
+        ...chess(1, 1, Tiles.Mosaic()),
+        ...chess(2, 0, Tiles.Mosaic()),
+        ...chess(3, 1, Tiles.Mosaic()),
+        ...chess(4, 0, Tiles.Mosaic()),
+      },
+      'Стена с ванной': {
+        ...chess(0, 0, Tiles.Mosaic()),
+        ...chess(1, 1, Tiles.Mosaic()),
+        ...chess(2, 0, Tiles.Mosaic()),
+        ...chess(3, 1, Tiles.Flower()),
+      }
+    }
+
+    const ToiletSidesInserts = {
+      'Входная стена': {
+        ...column(2, 11, Tiles.Flower())
+      },
+      'Стена с ванной': {
+        ...column(0, 11, Tiles.Flower())
+      }
+    }
+
+
+    function calcCount(s1, s2) {
+      return Math.ceil(s1 / s2)
+    }
+
+    function calcMax([width, height], sizeTail) {
+      const cols = calcCount(width, sizeTail.width)
+      const rows = calcCount(height, sizeTail.height)
+      return { rows, cols }
+    }
+
+    function renderCell(name, width, height, notCalculate) {
+      if (!notCalculate) {
+          TotalCount[name] += 1
+      }
+      const el = document.createElement('div')
+      el.style.width = `${Mod * width}px`
+      el.style.height = `${Mod * height}px`
+      el.style.backgroundImage = `url(${name}.jpg)`
+      el.setAttribute('class', 'cell')
+      return el
+    }
+
+    function getColumns(number, name, row, mapper, { width, height }) {
+        const columns =[];
+        for (let c = 0 ;c < number; c++) {
+          const changedCell = mapper && mapper[`${row}:${c}`]
+          columns.push(renderCell(changedCell ? changedCell.name() : name, width, height))
+        }
+        return columns
+    }
+
+    function renderWall([width, height]) {
+        const wall = document.createElement('div')
+        wall.setAttribute('class', 'wall')
+        wall.style.width = `${Mod * width}px`
+        wall.style.height = `${Mod * height}px`
+        return wall
+    }
+
+    function renderItemHeader(title) {
+      const text= document.createElement('h5')
+      text.innerHTML = `${title}`
+      return text
+    }
+
+    function renderItemFooter(rows, cols) {
+      const text= document.createElement('p')
+      const total = rows * cols
+      text.innerHTML = `${rows} x ${cols} = ${total}`
+      return text
+    }
+
+
+    function renderRow(cols, tile, row, mapper) {
+        const name = tile.name()
+        const element = document.createElement('div')
+        element.setAttribute('class', 'row')
+        const columns = getColumns(cols, name, row, mapper, tile.size())
+        columns.forEach(e => {element.appendChild(e)})
+        return element
+    }
+
+    function renderRows(cols, tile, count, mapper, wall) {
+      const rows = document.createElement('div')
+      rows.setAttribute('class', 'rows')
+      for (let r = 0; r < count; r++) rows.appendChild(renderRow(cols, tile, r, mapper))
+      rows.appendChild(wall)
+      return rows
+    }
+
+    function render(id, mapper) {
+      return function ({ width, height, tile, name }) {
+          const size = [width, height]
+          const { rows, cols } = calcMax(size, tile.size())
+          const children = document.createElement('div')
+          children.setAttribute('class', 'item')
+          children.appendChild(renderItemHeader(name))
+          children.appendChild(renderRows(cols, tile, rows, mapper[name], renderWall(size)))
+          children.appendChild(renderItemFooter(rows, cols))
+
+          document.getElementById(id).appendChild(children)
+      }
+    }
+
+    BathRoom.forEach(render('bath', bathSidesInserts))
+    ToiletRoom.forEach(render('toilet', ToiletSidesInserts))
+
+    const totalPrice = {}
+
+    function renderStat() {
+      const el = document.getElementById('stats')
+      Object.keys(TotalCount).forEach(i => {
+        const wrapper = document.createElement('div')
+        wrapper.setAttribute('class', 'count')
+        const total = TotalCount[i]
+        const cell = renderCell(i, 50, 50, i, true)
+        const packs = Math.ceil(total / PerPack[i])
+        const price = Prices[i] * packs
+        totalPrice[i] = price
+        const text = ` - Всего ${total} | Упаковок до большего ${packs} | Стоимость ${price.toFixed(2)} руб.`
+        const textElem = document.createElement('p')
+        textElem.innerText = text
+        wrapper.appendChild(cell)
+        wrapper.appendChild(textElem)
+        el.appendChild(wrapper)
+      })
+    }
+    renderStat()
+
+    function renderTotal() {
+      const el = document.getElementById('stats')
+      const textElem = document.createElement('p')
+      const price = Object.values(totalPrice).reduce(function(a, b) {
+        return a + b;
+      }, 0);
+      textElem.innerText = `Всего стоимость ${price.toFixed(2)}`
+      el.appendChild(textElem)
+    }
+    renderTotal()
+</script>
+</body>
+</html>
